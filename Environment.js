@@ -31,7 +31,7 @@
         Environment.scene = new THREE.Scene();
 
         // the camera starts at 0,0,0 so move it back in the space
-        Environment.camera.position.z = 600;
+        Environment.camera.position.z = 550;
         Environment.scene.add(Environment.camera);
 
         // start the renderer
@@ -45,16 +45,16 @@
         var boundingBoxConfig = {
           width: 360,
           height: 360,
-          depth: 1300,
+          depth: 360,
           splitX: 6,
           splitY: 6,
-          splitZ: 20
+          splitZ: 6
         };
         Environment.boundingBoxConfig = boundingBoxConfig;
         Environment.blockSize = boundingBoxConfig.width / boundingBoxConfig.splitX;
 
         var boundingBox = new THREE.Mesh(
-          new THREE.CubeGeometry(
+          new THREE.BoxGeometry(
             boundingBoxConfig.width, 
             boundingBoxConfig.height, 
             boundingBoxConfig.depth, 
@@ -77,6 +77,7 @@
         Environment.stats.domElement.style.top = '10px';
         Environment.stats.domElement.style.left = '10px';
         document.body.appendChild( Environment.stats.domElement );
+
 
         document.getElementById("play_button").addEventListener('click', function (event) {
           event.preventDefault();
