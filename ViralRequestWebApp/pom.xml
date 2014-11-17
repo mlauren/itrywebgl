@@ -14,8 +14,37 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+	  <groupId>org.apache.tomcat</groupId>
+	  <artifactId>tomcat-catalina</artifactId>
+	  <version>7.0.55</version>
+    </dependency>    
+    <dependency>
+      <groupId>com.restfb</groupId>
+      <artifactId>restfb</artifactId>
+      <version>1.7.0</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>ViralRequestWebApp</finalName>
+  <plugins>
+  	<plugin>
+  	  <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>tomcat-maven-plugin</artifactId>
+	    <configuration>
+		  <url>http://172.16.207.133:8080/manager</url>
+		  <server>mytomcat</server>
+		  <path>/ViralRequestWebApp</path>
+		</configuration>
+  	</plugin>
+  	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+  </plugins>
   </build>
 </project>
