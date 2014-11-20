@@ -8,6 +8,10 @@ public class Authenticator {
 	private String accessToken;
 	private FacebookClient facebookClient;
 	
+	/**
+	 * Uses specific token
+	 * @param token String of authentication token
+	 */
 	public Authenticator(String token) {
 		if (token == null || token.equalsIgnoreCase("")) {
 			this.accessToken = "";
@@ -18,6 +22,9 @@ public class Authenticator {
 		}
 	}
 	
+	/**
+	 * Uses token configured in .properties file
+	 */
 	public Authenticator() {
 		this(getToken());
 	}
