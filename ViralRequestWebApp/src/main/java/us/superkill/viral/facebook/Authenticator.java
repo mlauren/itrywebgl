@@ -1,6 +1,7 @@
 package us.superkill.viral.facebook;
 
-
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +24,7 @@ public class Authenticator {
 	public Authenticator(String token) {
 		logger.debug("!Using token: " + token);
 		this.accessToken = token;
-		this.facebookClient = new DefaultFacebookClient(token);
+		this.facebookClient = new DefaultFacebookClient(this.accessToken);
 		logger.debug("Authenticated w/ app token");
 	}
 	
@@ -40,8 +41,26 @@ public class Authenticator {
 	 */
 	private static String getToken() {
 		String token = "";
-		//stub i will put in properties file eventually
-		token = "CAACEdEose0cBAE4dRzCVZCXENZA8jx3VcBJepiZBR14MTQFOWPnY7g0MxjTXTJowfXiD5jIZCFT2HIXDeoNbg3YlpNxbijC989ZB7kuWhtFHIRKqzWwrp8285oZBBvVGsaTO1WqEXGqT60FgGYZCXwIQ8OT5AmYpt3Sip3y3PseZCb2GbqEXRuc5rpKtBVhL3GHNimeIOzgZBU3fHuVJ6Vi9znIBvBEkOF7gZD";
+		Properties prop = new Properties();
+    	InputStream input = null;
+    	
+    	try {
+    		String filename = "application.properties";
+    		input = Authenticator.class.getClassLoader()
+    				.getResourceAsStream(filename);
+    		prop.load(input);
+    		token = prop.getProperty("usertoken");
+    	} catch (Exception e) {
+    		logger.error("Unable to find application properties or token.");
+    	} finally {
+    		if(input!=null){
+        		try {
+        			input.close();
+				} catch (Exception e) {
+					logger.error("Unable to close properties file.");
+				}
+        	}
+    	}
 		return token;
 	}
 	
