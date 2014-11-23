@@ -49,7 +49,7 @@ public class Authenticator {
     		input = Authenticator.class.getClassLoader()
     				.getResourceAsStream(filename);
     		prop.load(input);
-    		token = prop.getProperty("usertoken");
+    		token = prop.getProperty("userToken");
     	} catch (Exception e) {
     		logger.error("Unable to find application properties or token.");
     	} finally {
