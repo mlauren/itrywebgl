@@ -5,13 +5,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
-import com.restfb.FacebookClient;
+import com.restfb.DefaultJsonMapper;
+import com.restfb.JsonMapper;
+import com.restfb.json.JsonObject;
 import com.restfb.types.Comment;
 import com.restfb.types.Post;
 import com.restfb.types.Post.Comments;
 
 public class CommentGrabber {
+	
+	private static final Logger logger = LogManager.getLogger(CommentGrabber.class.getName());
 	
 	/**
 	 * Given a FacebookClient returns comments on first post of group without 
@@ -19,20 +26,22 @@ public class CommentGrabber {
 	 * @param fbClient a FacebookClient that is authenticated with group access
 	 * @return Comments object
 	 */
-	private static Comments getComments(FacebookClient fbClient, 
+	private static Comments getComments(Authenticator auth, 
 			String groupId) {
-		
-		Post post = fbClient.fetchObject(groupId + "/feed?limit=1", 
-				Post.class);
+		logger.debug("getting comments");
+		JsonMapper jsonMapper = new DefaultJsonMapper();
+		com.restfb.json.JsonObject posts = auth.getFacebookClient()
+				.fetchObject(groupId + "/feed", JsonObject.class);
+		Post post = jsonMapper.toJavaObject(
+				posts.getJsonArray("data").get(0).toString(), Post.class);
 		Comments comments = post.getComments();
-		
 		return comments;
 	}
 	
 	private static String getVideoLink(String message) {
 		String value= "";
 		Pattern pattern = Pattern.compile(
-				"http\\:\\/\\/www\\.youtube\\.com\\/watch\\?v\\=[^\\s]*");
+				"^(http(s)?\\:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.?be)\\/(v\\=)?.+$");
 		Matcher matcher = pattern.matcher(message);
 		
 		if (matcher.find()) {
@@ -42,7 +51,8 @@ public class CommentGrabber {
 		return value;
 	}
 	
-	private static String[] formatComments(Comments input) {
+	public static String[] formatComments(Comments input) {
+		logger.debug("formatting comments");
 		List<Comment> comments = input.getData();
 		ArrayList<String> formatted = new ArrayList<String>();
 		
@@ -57,11 +67,14 @@ public class CommentGrabber {
 	}
 	
 	private static String toJson(String[] videoList) {
+		logger.debug("making it to JSON");
+		for (int i = 0; i < videoList.length; i++) {
+			logger.debug(videoList[i]);
+		}
 		String videos = "";
 		
 		Gson gson = new Gson();
-		gson.toJson(videoList);
-		videos = gson.toString();
+		videos = gson.toJson(videoList);
 		
 		return videos;
 	}
@@ -71,9 +84,11 @@ public class CommentGrabber {
 	 * @param fbClient
 	 * @return
 	 */
-	public static String getVideos(FacebookClient fbClient, String groupId) {
+	public static String getVideos(Authenticator auth, String groupId) {
+		logger.debug("getting videos");
 		String videos = "";
-		videos = toJson(formatComments(getComments(fbClient, groupId)));
+		//JsonObject test = auth.getFacebookClient().fetchObject(groupId + "/feed?limit=1", JsonObject.class);
+		videos = toJson(formatComments(getComments(auth, groupId)));
 		return videos;
 	}
 }
