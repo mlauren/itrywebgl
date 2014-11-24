@@ -28,7 +28,7 @@ public class CommentGrabber {
 	 */
 	private static Comments getComments(Authenticator auth, 
 			String groupId) {
-		logger.debug("getting comments");
+		logger.debug("Getting comments.");
 		JsonMapper jsonMapper = new DefaultJsonMapper();
 		com.restfb.json.JsonObject posts = auth.getFacebookClient()
 				.fetchObject(groupId + "/feed", JsonObject.class);
@@ -41,7 +41,8 @@ public class CommentGrabber {
 	private static String getVideoLink(String message) {
 		String value= "";
 		Pattern pattern = Pattern.compile(
-				"^(http(s)?\\:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.?be)\\/(v\\=)?.+$");
+				"^(http(s)?\\:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.?be)"
+				+ "\\/(v\\=)?.+$");
 		Matcher matcher = pattern.matcher(message);
 		
 		if (matcher.find()) {
@@ -52,7 +53,7 @@ public class CommentGrabber {
 	}
 	
 	public static String[] formatComments(Comments input) {
-		logger.debug("formatting comments");
+		logger.debug("Filtering for youtube links.");
 		List<Comment> comments = input.getData();
 		ArrayList<String> formatted = new ArrayList<String>();
 		
@@ -67,7 +68,7 @@ public class CommentGrabber {
 	}
 	
 	private static String toJson(String[] videoList) {
-		logger.debug("making it to JSON");
+		logger.debug("Converting to JSON.");
 		for (int i = 0; i < videoList.length; i++) {
 			logger.debug(videoList[i]);
 		}
@@ -85,10 +86,11 @@ public class CommentGrabber {
 	 * @return
 	 */
 	public static String getVideos(Authenticator auth, String groupId) {
-		logger.debug("getting videos");
+		logger.debug("Start retriving videos");
 		String videos = "";
 		//JsonObject test = auth.getFacebookClient().fetchObject(groupId + "/feed?limit=1", JsonObject.class);
 		videos = toJson(formatComments(getComments(auth, groupId)));
+		logger.debug("Finished retriving videos.");
 		return videos;
 	}
 }

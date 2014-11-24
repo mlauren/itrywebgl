@@ -35,29 +35,31 @@ public class VideoList extends HttpServlet {
     }
     
     public void init() {
+    	logger.debug("Initializing servlet.");
     	this.auth = new Authenticator(); 
     }
 
 	/**
+	 * Takes group id as param and returns all youtube videos in the first post
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//MTV3 is 320161474742175
 		//Test group is 728985000520376
 		String groupId = request.getParameter("group");
-		logger.debug("Getting Videos from" + groupId);
+		logger.debug("Getting Videos from group " + groupId);
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
-		
-//		Post post = auth.getFacebookClient().fetchObject("320161474742175/feed?limit=1", 
-//				Post.class);
-//		Comments comments = post.getComments();
-
-//		JsonObject post = auth.getFacebookClient().fetchObject("320161474742175/feed?limit=1", 
-//				JsonObject.class);
-		out.println(CommentGrabber.getVideos(auth, groupId));
-//		JsonObject test = auth.getFacebookClient().fetchObject(groupId + "/feed?limit=1", JsonObject.class);
-//		out.println(post.toString());
+		try {
+			out.println(CommentGrabber.getVideos(auth, groupId));
+			logger.debug("Successfully delived video list.");
+		} catch (Exception e) {
+			logger.error("Error retriving results. Possibly need new token.");
+			out.println("[]");
+			
+			logger.debug("Retring connection.");
+			this.auth = new Authenticator();
+		}
 	}
 
 	/**

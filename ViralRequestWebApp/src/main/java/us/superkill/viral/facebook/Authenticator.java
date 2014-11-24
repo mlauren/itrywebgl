@@ -22,10 +22,11 @@ public class Authenticator {
 	 * @param token String of authentication token
 	 */
 	public Authenticator(String token) {
-		logger.debug("!Using token: " + token);
+		logger.debug("Using token: " + token);
 		this.accessToken = token;
 		this.facebookClient = new DefaultFacebookClient(this.accessToken);
-		logger.debug("Authenticated w/ app token");
+		//insert an authentication check
+		logger.debug("Authenticated");
 	}
 	
 	/**
